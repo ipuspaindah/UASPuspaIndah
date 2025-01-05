@@ -1,0 +1,106 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+// Struktur untuk menyimpan data pesanan
+struct Order {
+    int orderId;
+    string pickupLocation;
+    string destination;
+    string orderTime;  // Format: "HH:MM:SS"
+
+    // Konstruktor dengan parameter untuk inisialisasi Order
+    Order(int id, string pickup, string dest, string time)
+        : orderId(id), pickupLocation(pickup), destination(dest), orderTime(time) {}
+
+    // Konstruktor default
+    Order() : orderId(0), pickupLocation(""), destination(""), orderTime("") {}
+};
+
+// Fungsi untuk menggabungkan dua bagian yang sudah terurut
+void merge(vector<Order>& orders, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    
+    // Membuat subarray
+    vector<Order> leftArray(n1), rightArray(n2);
+    
+    for (int i = 0; i < n1; i++) {
+        leftArray[i] = orders[left + i];
+    }
+    for (int i = 0; i < n2; i++) {
+        rightArray[i] = orders[mid + 1 + i];
+    }
+
+    int i = 0, j = 0, k = left;
+
+    // Menggabungkan dua subarray kembali ke dalam array utama
+    while (i < n1 && j < n2) {
+        if (leftArray[i].orderTime <= rightArray[j].orderTime) {
+            orders[k++] = leftArray[i++];
+        } else {
+            orders[k++] = rightArray[j++];
+        }
+    }
+
+    // Menyalin elemen yang tersisa
+    while (i < n1) {
+        orders[k++] = leftArray[i++];
+    }
+    while (j < n2) {
+        orders[k++] = rightArray[j++];
+    }
+}
+
+// Fungsi Merge Sort untuk mengurutkan data pesanan berdasarkan waktu pemesanan
+void mergeSort(vector<Order>& orders, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+
+        mergeSort(orders, left, mid);          // Urutkan bagian kiri
+        mergeSort(orders, mid + 1, right);     // Urutkan bagian kanan
+
+        merge(orders, left, mid, right);       // Gabungkan kedua bagian yang sudah terurut
+    }
+}
+
+// Fungsi untuk menampilkan data pesanan
+void printOrders(const vector<Order>& orders) {
+    cout << "ID Pesanan | Lokasi Pengambilan | Lokasi Tujuan | Waktu Pemesanan\n";
+    cout << "---------------------------------------------------------------\n";
+    for (size_t i = 0; i < orders.size(); ++i) {
+        cout << orders[i].orderId << " | " << orders[i].pickupLocation << " | " << orders[i].destination 
+             << " | " << orders[i].orderTime << endl;
+    }
+}
+
+int main() {
+	
+	// Menampilkan Nama dan NIM
+    cout << "Nama: Puspa Indah Maya Dewi\n";
+    cout << "NIM: 241011400837\n\n";
+
+    // Dataset pesanan yang belum terurut
+    vector<Order> orders;
+    orders.push_back(Order(1, "Jakarta", "Bandung", "12:30:00"));
+    orders.push_back(Order(2, "Surabaya", "Yogyakarta", "08:45:00"));
+    orders.push_back(Order(3, "Medan", "Palembang", "10:15:00"));
+    orders.push_back(Order(4, "Bali", "Jakarta", "09:00:00"));
+    orders.push_back(Order(5, "Bandung", "Surabaya", "14:20:00"));
+
+    // Menampilkan pesanan sebelum diurutkan
+    cout << "Pesanan Sebelum Diurutkan:\n";
+    printOrders(orders);
+    cout << endl;
+
+    // Mengurutkan pesanan berdasarkan waktu pemesanan menggunakan Merge Sort
+    mergeSort(orders, 0, orders.size() - 1);
+
+    // Menampilkan pesanan setelah diurutkan
+    cout << "Pesanan Setelah Diurutkan Berdasarkan Waktu Pemesanan:\n";
+    printOrders(orders);
+
+    return 0;
+}
