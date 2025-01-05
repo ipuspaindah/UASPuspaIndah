@@ -1,0 +1,96 @@
+#include <iostream>
+#include <string>
+#include <cstring>  // Untuk fungsi strcmp dan strncpy
+
+using namespace std;
+
+// Struktur untuk menyimpan data item fashion
+struct FashionItem {
+    char name[50];       // Menggunakan array char untuk nama
+    char category[50];   // Menggunakan array char untuk kategori
+    double price;
+    
+    // Konstruktor untuk menginisialisasi FashionItem
+    FashionItem(const char* n, const char* c, double p) {
+        strncpy(name, n, sizeof(name) - 1); // Menyalin nama dengan batasan ukuran
+        name[sizeof(name) - 1] = '\0'; // Menambahkan null terminator
+        strncpy(category, c, sizeof(category) - 1); // Menyalin kategori dengan batasan ukuran
+        category[sizeof(category) - 1] = '\0'; // Menambahkan null terminator
+        price = p;
+    }
+};
+
+// Fungsi Linear Search untuk mencari item berdasarkan nama
+int linearSearch(FashionItem data[], int size, const char* target) {
+    for (int i = 0; i < size; ++i) {
+        if (strcmp(data[i].name, target) == 0) {  // Membandingkan nama
+            return i;  // Ditemukan
+        }
+    }
+    return -1;  // Tidak ditemukan
+}
+
+// Fungsi untuk menghapus spasi di awal dan akhir string
+void trim(char* str) {
+    int start = 0;
+    int end = strlen(str) - 1;
+    
+    // Menghapus spasi di awal
+    while (start <= end && str[start] == ' ') {
+        start++;
+    }
+    
+    // Menghapus spasi di akhir
+    while (end >= start && str[end] == ' ') {
+        end--;
+    }
+    
+    // Menyusun string kembali
+    for (int i = 0; start <= end; ++i, ++start) {
+        str[i] = str[start];
+    }
+    str[end - start + 1] = '\0';  // Menambahkan null terminator
+}
+
+int main() {
+    // Menampilkan Nama dan NIM
+    cout << "Nama: Puspa Indah Maya Dewi\n";
+    cout << "NIM: 241011400837\n\n";
+
+    // Dataset fashion tidak terurut
+    FashionItem fashionItems[] = {
+        FashionItem("T-shirt Graphic", "T-shirt", 19.99),
+        FashionItem("Wool Scarf", "Accessories", 29.99),
+        FashionItem("Sneakers White", "Shoes", 59.99),
+        FashionItem("Leather Jacket", "Outerwear", 99.99),
+        FashionItem("Dress Floral", "Dress", 49.99)
+    };
+
+    int size = sizeof(fashionItems) / sizeof(fashionItems[0]); // Menghitung ukuran array
+
+    // Menampilkan dataset yang tidak terurut
+    cout << "Dataset Fashion Tidak Terurut:\n";
+    for (int i = 0; i < size; ++i) {
+        cout << "Nama: " << fashionItems[i].name << ", Kategori: " 
+             << fashionItems[i].category << ", Harga: $" << fashionItems[i].price << endl;
+    }
+
+    // Input nama item yang ingin dicari
+    char target[50];
+    cout << "\nMasukkan nama item fashion yang ingin dicari: ";
+    cin.getline(target, sizeof(target));
+
+    trim(target); // Menghapus spasi ekstra dari input
+
+    // Mencari item dengan Linear Search
+    int result = linearSearch(fashionItems, size, target);
+    
+    if (result != -1) {
+        cout << "Item '" << target << "' ditemukan!\n";
+        cout << "Kategori: " << fashionItems[result].category << ", Harga: $" << fashionItems[result].price << endl;
+    } else {
+        cout << "Item '" << target << "' tidak ditemukan dalam dataset.\n";
+    }
+
+    return 0;
+}
